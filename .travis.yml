@@ -1,0 +1,24 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t psalgaocar/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run psalgaocar/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t psalgaocar/multi-client ./client
+  - docker build -t psalgaocar/multi-nginx ./nginx
+  - docker build -t psalgaocar/multi-server ./server
+  - docker build -t psalgaocar/multi-worker ./worker
+#login to the docker CLI
+#Take these images and push to docker registry
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  - docker push psalgaocar/multi-client
+  - docker push psalgaocar/multi-nginx
+  - docker push psalgaocar/multi-server
+  - docker push psalgaocar/multi-worker
+
+
