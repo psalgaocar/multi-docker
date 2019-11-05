@@ -6,7 +6,7 @@ before_install:
   - docker build -t psalgaocar/react-test -f ./client/Dockerfile.dev ./client
 
 script:
-  - docker run psalgaocar/react-test npm test
+  - docker run -e CI=true psalgaocar/react-test npm test
 
 after_success:
   - docker build -t psalgaocar/multi-client ./client
